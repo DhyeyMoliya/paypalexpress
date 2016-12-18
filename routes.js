@@ -58,7 +58,7 @@ exports.execute = function(req, res) {
 		if (error) {
 			res.render('error', { 'error': error });
 		} else {
-			res.redirect('/success', { 'payment': payment });
+			res.redirect('/success');
 		}
 	});
 }
