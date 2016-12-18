@@ -28,7 +28,7 @@ exports.create = function (req, res) {
 		"transactions": [{
 			"amount": {
 				"currency": "USD",
-				"total": "15"
+				"total": "1"
 			},
 			"description": "description"
 		}],
@@ -53,26 +53,19 @@ exports.execute = function(req, res) {
     var paymentId = req.session.paymentId;
 	var payerId = req.param('PayerID');
 
-	var details = { "token":req.param('token'),
-		"payer_id": payerId 
-	};
+	var details = { "payer_id": payerId };
 	var payment = paypal.payment.execute(paymentId, details, function (error, payment) {
 		if (error) {
-			console.log(error);
 			res.render('error', { 'error': error });
 		} else {
-            if(payment.status == "approved")
-			    res.redirect('success', {'payment' : payment});
-            else
-				res.redirect('cancel', {'payment' : payment});
-                
+			res.redirect('/success', { 'payment': payment });
 		}
 	});
 }
 exports.success = function(req, res){
-  res.send('Payment Success Response: <br/>' + JSON.stringify(req.param('payment')) );
+  res.send('Payment Success Response.');
 };
 
 exports.cancel = function(req, res){
-  res.send('Payment Cancelled: <br/>' + JSON.stringify(req.param('payment')));
+  res.send('Payment Cancelled.');
 };
