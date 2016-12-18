@@ -11,7 +11,7 @@ exports.init = function(c){
  */
 
 exports.index = function(req, res){
-    res.sendFile(path.join(__dirname + '/../public/login.html'));
+    res.sendFile(path.join(__dirname + '/../public/index.html'));
 };
 
 /*
@@ -53,7 +53,9 @@ exports.execute = function(req, res) {
     var paymentId = req.session.paymentId;
 	var payerId = req.param('PayerID');
 
-	var details = { "payer_id": payerId };
+	var details = { "token":req.param('token'),
+		"payer_id": payerId 
+	};
 	var payment = paypal.payment.execute(paymentId, details, function (error, payment) {
 		if (error) {
 			console.log(error);
