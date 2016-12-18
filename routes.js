@@ -58,13 +58,10 @@ exports.execute = function(req, res) {
 		if (error) {
 			res.render('error', { 'error': error });
 		} else {
-			res.redirect('/success', {'payment' : payment});
+			res.render('success', {'payment' : payment});
 		}
 	});
 }
-exports.success = function(req, res){
-  res.send('Payment Success Response.<br/>' + JSON.stringify(req.param('payment')));
-};
 
 exports.cancel = function(req, res){
   res.send('Payment Cancelled.');
