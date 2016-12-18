@@ -34,7 +34,7 @@ exports.create = function (req, res) {
 		}],
         "redirect_urls": {
 			"return_url": "http://paypalexpress.heroku.com/execute",
-			"cancel_url": "http://paypalexpress.heroku.com/canceled"
+			"cancel_url": "http://paypalexpress.heroku.com/cancel"
 		}
 	};
 	
@@ -62,7 +62,7 @@ exports.execute = function(req, res) {
             if(payment.status == "approved")
 			    res.redirect('success', {'payment' : payment});
             else
-			    res.redirect('cancel', {'payment' : payment});
+			    res.redirect('cancel');
                 
 		}
 	});
@@ -72,8 +72,5 @@ exports.success = function(req, res){
 };
 
 exports.cancel = function(req, res){
-  res.send('Payment Cancel Response: <br/>' + JSON.stringify(req.param('payment')) );
+  res.send('Payment Cancelled: <br/>' );
 };
-exports.canceled = function(req, res) {
-	res.send('Payment Canceled');
-}
