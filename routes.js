@@ -33,7 +33,7 @@ exports.create = function (req, res) {
 			"description": "description"
 		}],
         "redirect_urls": {
-			"return_url": "http://paypalexpressheroku.com/execute",
+			"return_url": "http://paypalexpress.heroku.com/execute",
 			"cancel_url": "http://paypalexpress.heroku.com/cancel"
 		}
 	};
