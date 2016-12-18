@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', routes.index);
 app.post('/create', routes.create);
 app.get('/execute', routes.execute);
-app.get('/success', routes.success);
+app.post('/success', routes.success);
 app.get('/cancel', routes.cancel);
 
 // catch 404 and forward to error handler

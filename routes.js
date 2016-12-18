@@ -62,23 +62,16 @@ exports.execute = function(req, res) {
             if(payment.status == "approved")
 			    res.redirect('success', {'payment' : payment});
             else
-			    res.redirect('cancel', {'payment' : payment});
+				res.redirect('cancel', {'query': JSON.stringify(req.params)});
                 
 		}
 	});
 }
 
-
-
-exports.checkout = function(req, res) {
-    /**/
-    res.send('sucess');
-};
-
 exports.success = function(req, res){
-  res.send('Payment Success Response: <br/>' + JSON.stringify(req.param('payment')) );
+  res.send('<h1>Payment Success.</h1><br/>Output : ' + JSON.stringify(req.param.payment));
 };
 
 exports.cancel = function(req, res){
-  res.send('Payment Cancel Response: <br/>' + JSON.stringify(req.param('payment')) );
+  res.send('<h1>Payment Cancelled.</h1><br/>Output : '+ JSON.stringify(req.query));
 };
