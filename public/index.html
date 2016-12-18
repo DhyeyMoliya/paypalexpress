@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>PayPal Exress Checkout Sample</title>
+        <link href="stylesheets/style.css" rel="stylesheet"/>
+    </head>
+    <body>
+        <h1>PayPal Express Checkout Sample</h1>
+        <form id="myContainer" method="post" action="/create"></form>
+        <script>
+        window.paypalCheckoutReady = function() {
+            paypal.checkout.setup('TX3UFA249JRDS', {
+                environment: 'sandbox',
+                container: 'myContainer'
+            });
+        };
+        </script>
+        <script src="//www.paypalobjects.com/api/checkout.js" async></script>
+    </body>
+</html>
