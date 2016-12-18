@@ -37,9 +37,9 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', routes.index);
-app.get('/create', routes.create);
-//app.get('/success', routes.success);
-//app.get('/cancel', routes.cancel);
+app.post('/create', routes.create);
+app.get('/success', routes.success);
+app.get('/cancel', routes.cancel);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
