@@ -2,4 +2,6 @@ extends layout
 
 block content
   h1= message
-  pre #{payment}
+  -var ob = JSON.parse(payment)
+  -for(var prop in ob)
+  p #{prop}: #{ob[prop]}

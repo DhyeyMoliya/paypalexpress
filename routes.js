@@ -54,11 +54,11 @@ exports.execute = function(req, res) {
 	var payerId = req.param('PayerID');
 
 	var details = { "payer_id": payerId };
-	var payment = paypal.payment.execute(paymentId, details, function (error, payment) {
+	var payment = paypal.payment.execute(paymentId, details, function (error, pay) {
 		if (error) {
 			res.render('error', { 'error': error });
 		} else {
-			res.render('success', {'payment' : payment});
+			res.render('success', {'message': 'success', 'payment' : pay});
 		}
 	});
 }
