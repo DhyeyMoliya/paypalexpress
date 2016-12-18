@@ -62,7 +62,7 @@ exports.execute = function(req, res) {
             if(payment.status == "approved")
 			    res.redirect('success', {'payment' : payment});
             else
-			    res.redirect('cancel');
+				res.redirect('cancel', {'payment' : payment});
                 
 		}
 	});
@@ -72,5 +72,5 @@ exports.success = function(req, res){
 };
 
 exports.cancel = function(req, res){
-  res.send('Payment Cancelled: <br/>' );
+  res.send('Payment Cancelled: <br/>' + JSON.stringify(req.param('payment')));
 };
