@@ -28,7 +28,7 @@ exports.create = function (req, res) {
 		"transactions": [{
 			"amount": {
 				"currency": "USD",
-				"total": "10"
+				"total": "15"
 			},
 			"description": "description"
 		}],
