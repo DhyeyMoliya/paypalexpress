@@ -2,18 +2,57 @@
     <head>
         <title>PayPal Exress Checkout Sample</title>
         <link href="stylesheets/style.css" rel="stylesheet"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://www.paypalobjects.com/api/checkout.js" data-version-4></script>
     </head>
     <body>
         <h1>PayPal Express Checkout Sample</h1>
-        <form id="myContainer" method="post" action="/create"></form>
+        <div id="paypal-button"></div>
+        <div id="payment-details">
+            <h2>Payment Details: </h2>
+            <p id="pay-details"></p>
+        </div>
+        <h2 id="confirmation">Payment Confirmed.</h2>
         <script>
-        window.paypalCheckoutReady = function() {
-            paypal.checkout.setup('TX3UFA249JRDS', {
-                environment: 'sandbox',
-                container: 'myContainer'
-            });
-        };
+            $('#payment-details').hide();
+            $('#confirmation').hide();
+
+            paypal.Button.render({
+            
+                env: 'sandbox', // Specify 'sandbox' for the test environment
+
+                client: {
+                    sandbox: 'AdJNBuss4e-3bSAiNBatiFBhMTNjNA0xvLUo8lnzf0nC_ElOA7R6rbGe4UmR4edLmkASDcX-qW8IpyVa'
+                },
+
+                payment: function() {
+                    // Set up the payment here, when the buyer clicks on the button
+                    var env    = this.props.env;
+                    var client = this.props.client;
+                
+                    return paypal.rest.payment.create(env, client, {
+                        transactions: [
+                            {
+                                amount: { total: '10.00', currency: 'USD' }
+                            }
+                        ]
+                    });
+                },
+                commit: true,
+                onAuthorize: function(data, actions) {
+                    // Execute the payment here, when the buyer approves the transaction
+                    var dt = JSON.stringify(data);
+                    $('#pay-details').append(dt);
+                    $('#payment-details').show();
+
+                    return actions.payment.execute().then(function() {
+                        $('#confirmation').show();
+                        // Show a success page to the buyer
+                    });
+                }
+                    
+            }, '#paypal-button');
         </script>
-        <script src="//www.paypalobjects.com/api/checkout.js" async></script>
     </body>
 </html>

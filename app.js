@@ -9,14 +9,14 @@ var fs = require('fs');
 var routes = require('./routes.js');
 var app = express();
 
-try {
+/*try {
   var configJSON = fs.readFileSync(__dirname + "/config.json");
   var config = JSON.parse(configJSON.toString());
 } catch (e) {
   console.error("File config.json not found or is invalid: " + e.message);
   process.exit(1);
 }
-routes.init(config);
+routes.init(config);*/
 app.set('port', (process.env.PORT || 5000));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,11 +37,12 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', routes.index);
+/*
 app.post('/create', routes.create);
 app.get('/execute', routes.execute);
 app.get('/success', routes.execute);
 app.get('/cancel', routes.cancel);
-
+*/
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
