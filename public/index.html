@@ -17,8 +17,8 @@
             
                 payment: function(resolve, reject) {
                     
-                    //var CREATE_PAYMENT_URL = 'https://paypalexpresscheckout.herokuapp.com/create-payment';
-                    var CREATE_PAYMENT_URL = 'http://localhost:5000/create-payment';
+                    var CREATE_PAYMENT_URL = 'https://paypalexpress.herokuapp.com/create-payment';
+                    //var CREATE_PAYMENT_URL = 'http://localhost:5000/create-payment';
                         
                     paypal.request.post(CREATE_PAYMENT_URL)
                         .then(function(data) { resolve(data.paymentID); })
@@ -29,13 +29,13 @@
                 
                     // Note: you can display a confirmation page before executing
                     
-                    //var EXECUTE_PAYMENT_URL = 'https://paypalexpresscheckout.herokuapp.com/execute-payment';
-                    var EXECUTE_PAYMENT_URL = 'http://localhost:5000/execute-payment';
+                    var EXECUTE_PAYMENT_URL = 'https://paypalexpress.herokuapp.com/execute-payment';
+                    //var EXECUTE_PAYMENT_URL = 'http://localhost:5000/execute-payment';
 
                     paypal.request.post(EXECUTE_PAYMENT_URL,
                             { paymentID: data.paymentID, payerID: data.payerID })  
-                        .then(function(data) { window.location.assign("http://localhost:5000/success");})
-                        .catch(function(err) { window.location.assign("http://localhost:5000/success"); });
+                        .then(function(data) { window.location.assign("http://paypalexpress.herokuapp.com/success");})
+                        .catch(function(err) { window.location.assign("http://paypalexpress.herokuapp.com/success"); });
                 }
 
             }, '#paypal-button');

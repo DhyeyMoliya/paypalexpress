@@ -34,8 +34,8 @@ exports.create = function (req, res) {
 		"intent": "sale",
 		"redirect_urls":
 		{
-			"return_url": "http://localhost:5000/execute-payment",
-			"cancel_url": "http://localhost:5000/cancel-payment"
+			"return_url": "http://paypalexpress.herokuapp.com/execute-payment",
+			"cancel_url": "http://paypalexpress.herokuapp.com/cancel-payment"
 		},
 		"payer":
 		{
