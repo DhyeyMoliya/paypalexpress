@@ -41,7 +41,13 @@
                             window.location.assign("/error");
                             //window.location.assign("http://paypalexpress.herokuapp.com/success"); 
                         });
-                }
+                },
+
+                onCancel: function(data, actions) {
+                    // Show a cancel page or return to cart
+                    window.location.assign("/cancel-payment");
+                    
+                },
 
             }, '#paypal-button');
         </script>

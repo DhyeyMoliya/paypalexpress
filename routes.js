@@ -149,5 +149,5 @@ exports.success = function(req, res){
 
 exports.cancel = function(req, res){
   	
-	res.send('<h1>Payment Cancel: </h1><br/>' + JSON.stringify(req.session.payemnt));
+	res.send('<h1>Payment Cancelled. </h1><br/>');
 };
