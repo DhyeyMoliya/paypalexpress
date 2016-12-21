@@ -37,12 +37,11 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', routes.index);
-/*
-app.post('/create', routes.create);
-app.get('/execute', routes.execute);
-app.get('/success', routes.execute);
-app.get('/cancel', routes.cancel);
-*/
+app.post('/create-payment', routes.create);
+app.post('/execute-payment', routes.execute);
+app.get('/success', routes.success);
+app.get('/cancel-payment', routes.cancel);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

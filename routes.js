@@ -1,44 +1,106 @@
 var path = require('path');
 var paypal = require('paypal-rest-sdk');
-var config = {};
-var redirect_link = null;
-exports.init = function(c){
-  config = c;
-  paypal.configure(c.api);
-}
+
 /*
  * GET home page.
  */
 
-exports.index = function(req, res){
-    res.sendFile(path.join(__dirname + '/../public/index.html'));
+var first_config = {
+    'mode': 'sandbox',
+    'client_id': 'AdJNBuss4e-3bSAiNBatiFBhMTNjNA0xvLUo8lnzf0nC_ElOA7R6rbGe4UmR4edLmkASDcX-qW8IpyVa',
+    'client_secret': 'EHkhZimLCGU-J0a5XfKxJb4bxLDraRlPO5tMmgHSYQlGZYSaVvmhAGcKcRJJLUodUe6XCgf1FaTg-d7h'
 };
+
+var second_config = {
+    'mode': 'sandbox',
+    'client_id': '<SECOND_CLIENT_ID>',
+    'client_secret': '<SECOND_CLIENT_SECRET>'
+};
+
+//This sets up client id and secret globally
+//to FIRST_CLIENT_ID and FIRST_CLIENT_SECRET
+paypal.configure(first_config);
 
 /*
  * SDK configuration
  */
+exports.index = function(req, res){
+    res.sendFile(path.join(__dirname + '/../public/login.html'));
+};
 
 exports.create = function (req, res) {
 
-	var payment = {
+	var create_payment_json = {
 		"intent": "sale",
-		"payer": {
-            "payment_method": "paypal"
+		"redirect_urls":
+		{
+			"return_url": "http://localhost:5000/execute-payment",
+			"cancel_url": "http://localhost:5000/cancel-payment"
 		},
-		"transactions": [{
-			"amount": {
-				"currency": "USD",
-				"total": "1"
+		"payer":
+		{
+			"payment_method": "paypal"
+		},
+		"transactions": [
+		{
+			"amount":
+			{
+			"total": "4.00",
+			"currency": "USD",
+			"details":
+			{
+				"subtotal": "2.00",
+				"shipping": "1.00",
+				"tax": "2.00",
+				"shipping_discount": "-1.00"
+			}
 			},
-			"description": "description"
-		}],
-        "redirect_urls": {
-			"return_url": "http://paypalexpress.heroku.com/execute",
-			"cancel_url": "http://paypalexpress.heroku.com/cancel"
-		}
+			"item_list":
+			{
+			"items": [
+			{
+				"quantity": "1",
+				"name": "item 1",
+				"price": "1",
+				"currency": "USD",
+				"description": "item 1 description",
+				"tax": "1"
+			},
+			{
+				"quantity": "1",
+				"name": "item 2",
+				"price": "1",
+				"currency": "USD",
+				"description": "item 2 description",
+				"tax": "1"
+			}]
+			},
+			"description": "The payment transaction description.",
+			"invoice_number": "1234",
+			"custom": "merchant custom data"
+		}]
 	};
 	
-	paypal.payment.create(payment, function (error, payment) {
+	paypal.payment.create(create_payment_json, function (error, payment) {
+		if (error) {
+			res.render('error', { 'error': error });
+		} else {
+			console.log("Create Payment Response");
+			console.log(payment);
+			req.session.payment = payment;
+			var paymentLink = "";
+			res.send({'paymentID': payment.id});
+			/*for (var index = 0; index < payment.links.length; index++) {
+				//Redirect user to this endpoint for redirect url
+				if (payment.links[index].rel === 'approval_url') {
+					paymentLink = payment.links[index].href;
+				}
+			}
+			res.render('payment-details',{'payment': payment, 'paymentLink': paymentLink});*/
+		}
+	});
+
+	/*paypal.payment.create(payment, function (error, payment) {
 		if (error) {
 			console.log(error);
 			res.render('error', { 'error': error });
@@ -46,26 +108,55 @@ exports.create = function (req, res) {
 			req.session.paymentId = payment.id;
 			res.redirect(payment.links[1].href);
 		}
-	});
+	});*/
 };
 
 exports.execute = function(req, res) {
-    var paymentId = req.session.paymentId;
-	var payerId = req.param('PayerID');
-
-	var details = { "payer_id": payerId };
-	var payment = paypal.payment.execute(paymentId, details, function (error, payment) {
-		if (error) {
-			res.render('error', { 'error': error });
-		} else {
-			res.redirect('/success');
-		}
+	var paymentId = req.session.payment.id;
+	paypal.payment.get(paymentId, function (error, payment) {
+        payerId = payment.payer.payer_info.payer_id;
+		console.log(payerId);
+		var details = { "payer_id": payerId };
+		paypal.payment.execute(paymentId, details, function (error, payment) {
+			if (error) {
+				console.log(error.response.details);
+				res.render('error', { 'error': error });
+			} else {
+					console.log(payment);
+					res.send({'payment' : payment});   
+			}
+		});
 	});
 }
+
+
+
+exports.checkout = function(req, res) {
+    /**/
+    res.send('sucess');
+};
+
 exports.success = function(req, res){
-  res.send('<h1>Success</h1><br/>' );
+	var paymentId = req.session.payemnt.id;
+	paypal.payment.get(paymentId, function (error, payment) {
+		if (error) {
+			console.log(error.response.details);
+			res.render('error', { 'error': error });
+		} else {
+			res.send('<h1>Payment Success: </h1><br/>' + Json.stringify(payment));
+		}
+	});
+  
 };
 
 exports.cancel = function(req, res){
-  res.send('Payment Cancelled.');
+	var paymentId = req.session.payemnt.id;
+  	paypal.payment.get(paymentId, function (error, payment) {
+		if (error) {
+			console.log(error.response.details);
+			res.render('error', { 'error': error });
+		} else {
+			res.send('<h1>Payment Cancel: </h1><br/>' + Json.stringify(payment));
+		}
+	});
 };
