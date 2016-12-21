@@ -41,6 +41,7 @@ app.post('/create-payment', routes.create);
 app.post('/execute-payment', routes.execute);
 app.get('/success', routes.success);
 app.get('/cancel-payment', routes.cancel);
+app.get('/error', routes.error);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

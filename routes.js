@@ -25,7 +25,9 @@ paypal.configure(first_config);
  * SDK configuration
  */
 exports.index = function(req, res){
+	
     res.sendFile(path.join(__dirname + '/../public/login.html'));
+	console.log('index');
 };
 
 exports.create = function (req, res) {
@@ -34,7 +36,7 @@ exports.create = function (req, res) {
 		"intent": "sale",
 		"redirect_urls":
 		{
-			"return_url": "http://paypalexpress.herokuapp.com/execute-payment",
+			"return_url": "http://localhost:5000/execute-payment",
 			"cancel_url": "http://paypalexpress.herokuapp.com/cancel-payment"
 		},
 		"payer":
@@ -76,14 +78,14 @@ exports.create = function (req, res) {
 			}]
 			},
 			"description": "The payment transaction description.",
-			"invoice_number": "1234",
 			"custom": "merchant custom data"
 		}]
 	};
 	
 	paypal.payment.create(create_payment_json, function (error, payment) {
 		if (error) {
-			res.render('error', { 'error': error });
+			console.log(error.response.details);
+			res.send({ 'err': error });
 		} else {
 			console.log("Create Payment Response");
 			console.log(payment);
@@ -113,16 +115,21 @@ exports.create = function (req, res) {
 
 exports.execute = function(req, res) {
 	var paymentId = req.session.payment.id;
+	console.log("In execute");
 	paypal.payment.get(paymentId, function (error, payment) {
+	console.log("In get payment");
         payerId = payment.payer.payer_info.payer_id;
-		console.log(payerId);
+		console.log(paymentId+" "+payerId);
 		var details = { "payer_id": payerId };
 		paypal.payment.execute(paymentId, details, function (error, payment) {
+	console.log("In execute payment");
 			if (error) {
-				console.log(error.response.details);
-				res.render('error', { 'error': error });
+				console.log(error);
+				res.send({'err': error });
 			} else {
+	console.log("After execute payment");
 					console.log(payment);
+					req.session.payment = payment;
 					res.send({'payment' : payment});   
 			}
 		});
@@ -131,32 +138,16 @@ exports.execute = function(req, res) {
 
 
 
-exports.checkout = function(req, res) {
+exports.error = function(req, res) {
     /**/
-    res.send('sucess');
+    res.render('error');
 };
 
 exports.success = function(req, res){
-	var paymentId = req.session.payemnt.id;
-	paypal.payment.get(paymentId, function (error, payment) {
-		if (error) {
-			console.log(error.response.details);
-			res.render('error', { 'error': error });
-		} else {
-			res.send('<h1>Payment Success: </h1><br/>' + Json.stringify(payment));
-		}
-	});
-  
+	res.send('<h1>Payment Success: </h1><br/>' + JSON.stringify(req.session.payment));
 };
 
 exports.cancel = function(req, res){
-	var paymentId = req.session.payemnt.id;
-  	paypal.payment.get(paymentId, function (error, payment) {
-		if (error) {
-			console.log(error.response.details);
-			res.render('error', { 'error': error });
-		} else {
-			res.send('<h1>Payment Cancel: </h1><br/>' + Json.stringify(payment));
-		}
-	});
+  	
+	res.send('<h1>Payment Cancel: </h1><br/>' + JSON.stringify(req.session.payemnt));
 };
